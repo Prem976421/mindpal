@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Optional
 
-from src.config import STATIC_DIR, GEMINI_MODEL
+from src.config import STATIC_DIR, GEMINI_MODEL, BASE_DIR
 from src.db import (
     init_db,
     create_session,
@@ -59,6 +59,28 @@ def serve_index():
     if not index_file.exists():
         raise HTTPException(status_code=404, detail="Index file not found")
     return FileResponse(index_file)
+
+@app.get("/download/pdf")
+def download_pdf():
+    pdf_path = BASE_DIR / "YCCE_MindPal_Project_Report.pdf"
+    if not pdf_path.exists():
+        raise HTTPException(status_code=404, detail="PDF report not found")
+    return FileResponse(
+        pdf_path,
+        media_type="application/pdf",
+        filename="YCCE_MindPal_Project_Report.pdf"
+    )
+
+@app.get("/download/docx")
+def download_docx():
+    docx_path = BASE_DIR / "YCCE_MindPal_Project_Report.docx"
+    if not docx_path.exists():
+        raise HTTPException(status_code=404, detail="Word report not found")
+    return FileResponse(
+        docx_path,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        filename="YCCE_MindPal_Project_Report.docx"
+    )
 
 @app.get("/api/sessions")
 def get_sessions():
