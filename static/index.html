@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindPal - Student Mental Well-being Companion</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <!-- Marked.js for fast client-side markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+  <!-- Left Sidebar (ChatGPT / Gemini style) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-icon">🌱</span>
+        <span>MindPal</span>
+      </div>
+      <button class="sidebar-toggle-btn" id="sidebarCollapseBtn" title="Close Sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
+      </button>
+    </div>
+
+    <!-- New Chat Pill Button -->
+    <button class="new-chat-btn" id="newChatBtn">
+      <span>New reflection</span>
+      <span class="plus">+</span>
+    </button>
+
+    <!-- Sessions History List -->
+    <div class="sessions-container" id="sessionsContainer">
+      <div class="sessions-label">Past Conversations</div>
+      <div id="sessionsList">
+        <!-- Dynamically populated -->
+      </div>
+    </div>
+
+    <!-- Sidebar Footer with Wellness Tools & Theme -->
+    <div class="sidebar-footer">
+      <button class="tool-btn" id="openBreathingModalBtn">
+        <span>🧘</span>
+        <span>Guided Box Breathing</span>
+      </button>
+
+      <button class="tool-btn" id="openMoodModalBtn">
+        <span>🧠</span>
+        <span>Log Mental State</span>
+      </button>
+
+      <div class="theme-switch-row">
+        <span>Display Mode</span>
+        <button class="sidebar-toggle-btn" id="themeToggleBtn" title="Switch Theme">
+          <span id="themeIcon">☀️</span>
+        </button>
+      </div>
+
+      <div style="font-size: 0.73rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; padding-top: 4px;">
+        <span>🔒</span>
+        <span>Stored locally on this device</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main View -->
+  <main class="main-wrapper">
+    <!-- Top Navigation Bar -->
+    <header class="top-nav">
+      <div class="left-controls">
+        <button class="sidebar-toggle-btn" id="sidebarExpandBtn" title="Open Sidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
+        </button>
+        <span class="chat-header-title" id="chatHeaderTitle">New Conversation</span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="model-badge">
+          <span>✨</span>
+          <span>Gemini 3.5 Flash</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Messages / Hero Timeline -->
+    <div class="messages-container" id="messagesContainer">
+      <!-- Hero Screen when conversation is empty -->
+      <div class="hero-screen" id="heroScreen">
+        <div class="hero-avatar">🌱</div>
+        <h1 class="hero-heading">Where does your mind need peace today?</h1>
+        <p class="hero-subheading">
+          A confidential sanctuary for students to express academic stress, work through perfectionism, and receive grounded learning guidance.
+        </p>
+
+        <!-- Prompt Starter Cards -->
+        <div class="starters-grid">
+          <div class="starter-card" data-prompt="I have upcoming exams and my chest feels so tight with anxiety. I can't seem to calm down.">
+            <div class="starter-icon">😫</div>
+            <div class="starter-title">Exam Panic & Anxiety</div>
+            <div class="starter-desc">Downregulate stress with physiological grounding and calm perspective.</div>
+          </div>
+
+          <div class="starter-card" data-prompt="I have been procrastinating all day on my assignment and I feel guilty and frustrated with myself.">
+            <div class="starter-icon">⏳</div>
+            <div class="starter-title">Break Procrastination Guilt</div>
+            <div class="starter-desc">Overcome activation friction with the 5-Minute start method.</div>
+          </div>
+
+          <div class="starter-card" data-prompt="Can you teach me how to study using the Feynman Technique for difficult concepts?">
+            <div class="starter-icon">🧠</div>
+            <div class="starter-title">Feynman Technique</div>
+            <div class="starter-desc">Simplify complex subjects by identifying and fixing gaps in your understanding.</div>
+          </div>
+
+          <div class="starter-card" data-prompt="I feel burned out, exhausted, and like I am not smart enough to keep up with my peers.">
+            <div class="starter-icon">🌧️</div>
+            <div class="starter-title">Imposter Syndrome & Burnout</div>
+            <div class="starter-desc">Untangle academic self-doubt with cognitive reframing and self-compassion.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Messages List -->
+      <div class="messages-list" id="messagesList" style="display: none;">
+        <!-- Dynamic message rows -->
+      </div>
+    </div>
+
+    <!-- Centered Bottom Pill Input Box (ChatGPT / Gemini style) -->
+    <div class="input-floating-area">
+      <div class="input-box-wrapper">
+        <textarea 
+          id="chatInput" 
+          rows="1" 
+          placeholder="Message MindPal... (Share what's on your mind or ask a study question)"
+        ></textarea>
+        <button class="send-btn" id="sendBtn" disabled title="Send message">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m5 12 14-7-7 14-2-5-5-2z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="input-footer-hint">
+        MindPal is an empathetic companion for student wellness • Press Enter to send, Shift + Enter for newline
+      </div>
+    </div>
+  </main>
+
+  <!-- Interactive 1-Minute Guided Box Breathing Modal -->
+  <div class="modal-overlay" id="breathingModal">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="closeBreathingModal">&times;</button>
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
+        🌬️ 60-Second Box Breathing
+      </h3>
+      <p style="font-size: 0.85rem; color: var(--text-secondary);">
+        Activates the parasympathetic nervous system to physically reset acute anxiety.
+      </p>
+
+      <div class="breathing-box">
+        <div class="breathing-circle" id="breathingCircle">Inhale</div>
+      </div>
+
+      <div class="breathing-instruction" id="breathingInstruction">Inhale deeply...</div>
+      <div class="breathing-subtext" id="breathingSubtext">4 seconds in through your nose</div>
+
+      <div style="margin-top: 24px;">
+        <button class="tool-btn" id="startBreathingBtn" style="width: 100%; justify-content: center; background-color: var(--primary-accent); color: white; border: none; font-weight: 600;">
+          Start Exercise
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mood & Headspace Logger Modal -->
+  <div class="modal-overlay" id="moodModal">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="closeMoodModal">&times;</button>
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
+        🧠 Check in with your Headspace
+      </h3>
+      <p style="font-size: 0.85rem; color: var(--text-secondary);">
+        Acknowledge your emotional state today. Stored privately on your device.
+      </p>
+
+      <div class="mood-buttons-grid">
+        <button class="mood-chip" data-mood="Calm">
+          😊
+          <span>Calm</span>
+        </button>
+        <button class="mood-chip" data-mood="Focused">
+          🎯
+          <span>Focused</span>
+        </button>
+        <button class="mood-chip" data-mood="Stressed">
+          🤯
+          <span>Stressed</span>
+        </button>
+        <button class="mood-chip" data-mood="Exhausted">
+          😴
+          <span>Exhausted</span>
+        </button>
+        <button class="mood-chip" data-mood="Low">
+          🌧️
+          <span>Low</span>
+        </button>
+      </div>
+
+      <div style="text-align: left; margin-bottom: 16px;">
+        <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 6px;">
+          Energy Level (1 = Depleted, 5 = Peak)
+        </label>
+        <input type="range" id="moodEnergy" min="1" max="5" value="3" style="width: 100%;">
+      </div>
+
+      <div style="text-align: left; margin-bottom: 20px;">
+        <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 6px;">
+          Brief reflection / trigger note (optional)
+        </label>
+        <input type="text" id="moodNote" placeholder="e.g. Finals coming up, didn't sleep well" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--bg-sidebar-hover); color: var(--text-primary); outline: none;">
+      </div>
+
+      <button class="tool-btn" id="saveMoodBtn" style="width: 100%; justify-content: center; background-color: var(--primary-accent); color: white; border: none; font-weight: 600;">
+        Save Check-in
+      </button>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
