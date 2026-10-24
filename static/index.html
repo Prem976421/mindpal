@@ -30,34 +30,48 @@
 
     <!-- Sessions History List -->
     <div class="sessions-container" id="sessionsContainer">
-      <div class="sessions-label">Past Conversations</div>
+      <div class="sessions-label">Past Reflections</div>
       <div id="sessionsList">
         <!-- Dynamically populated -->
       </div>
     </div>
 
-    <!-- Sidebar Footer with Wellness Tools & Theme -->
+    <!-- Sidebar Footer with Practical Wellness Tools -->
     <div class="sidebar-footer">
+      <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; margin-bottom: 2px;">
+        Instant Wellness Tools
+      </div>
+
+      <button class="tool-btn" id="openWorryModalBtn">
+        <span>🌪️</span>
+        <span>Worry Dump & Triage</span>
+      </button>
+
+      <button class="tool-btn" id="openReframeModalBtn">
+        <span>🔄</span>
+        <span>De-Catastrophizer</span>
+      </button>
+
+      <button class="tool-btn" id="openKickstartModalBtn">
+        <span>⚡</span>
+        <span>5-Min Study Kickstart</span>
+      </button>
+
       <button class="tool-btn" id="openBreathingModalBtn">
-        <span>🧘</span>
-        <span>Guided Box Breathing</span>
+        <span>🌬️</span>
+        <span>Panic Reset (Breathing & 5-4-3-2-1)</span>
       </button>
 
-      <button class="tool-btn" id="openMoodModalBtn">
-        <span>🧠</span>
-        <span>Log Mental State</span>
-      </button>
-
-      <div class="theme-switch-row">
-        <span>Display Mode</span>
+      <div class="theme-switch-row" style="margin-top: 6px;">
+        <span>Theme Mode</span>
         <button class="sidebar-toggle-btn" id="themeToggleBtn" title="Switch Theme">
           <span id="themeIcon">☀️</span>
         </button>
       </div>
 
-      <div style="font-size: 0.73rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; padding-top: 4px;">
+      <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; padding-top: 4px;">
         <span>🔒</span>
-        <span>Stored locally on this device</span>
+        <span>Stored 100% locally on your computer</span>
       </div>
     </div>
   </aside>
@@ -70,10 +84,17 @@
         <button class="sidebar-toggle-btn" id="sidebarExpandBtn" title="Open Sidebar">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
         </button>
-        <span class="chat-header-title" id="chatHeaderTitle">New Conversation</span>
+        <span class="chat-header-title" id="chatHeaderTitle">New Reflection</span>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <!-- Quick Action Shortcuts in Top Header -->
+        <button class="tool-btn" id="quickWorryBtn" style="padding: 5px 10px; font-size: 0.8rem;" title="De-tangle racing thoughts">
+          <span>🌪️</span> <span>Worry Dump</span>
+        </button>
+        <button class="tool-btn" id="quickBreathingBtn" style="padding: 5px 10px; font-size: 0.8rem;" title="Calm panic">
+          <span>🌬️</span> <span>Panic Reset</span>
+        </button>
         <div class="model-badge">
           <span>✨</span>
           <span>Gemini 3.5 Flash</span>
@@ -86,35 +107,35 @@
       <!-- Hero Screen when conversation is empty -->
       <div class="hero-screen" id="heroScreen">
         <div class="hero-avatar">🌱</div>
-        <h1 class="hero-heading">Where does your mind need peace today?</h1>
+        <h1 class="hero-heading">Where does your mind need relief today?</h1>
         <p class="hero-subheading">
-          A confidential sanctuary for students to express academic stress, work through perfectionism, and receive grounded learning guidance.
+          A non-judgmental space for students to talk through academic pressure, dismantle procrastination guilt, and build calm study habits.
         </p>
 
         <!-- Prompt Starter Cards -->
         <div class="starters-grid">
-          <div class="starter-card" data-prompt="I have upcoming exams and my chest feels so tight with anxiety. I can't seem to calm down.">
+          <div class="starter-card" data-prompt="I have an exam coming up and my chest feels so tight with anxiety. I can't focus on studying.">
             <div class="starter-icon">😫</div>
             <div class="starter-title">Exam Panic & Anxiety</div>
-            <div class="starter-desc">Downregulate stress with physiological grounding and calm perspective.</div>
+            <div class="starter-desc">Downregulate physiological stress and regain study clarity.</div>
           </div>
 
-          <div class="starter-card" data-prompt="I have been procrastinating all day on my assignment and I feel guilty and frustrated with myself.">
+          <div class="starter-card" data-prompt="I've been procrastinating all day on my coursework and now I feel terrible, guilty, and paralyzed.">
             <div class="starter-icon">⏳</div>
             <div class="starter-title">Break Procrastination Guilt</div>
-            <div class="starter-desc">Overcome activation friction with the 5-Minute start method.</div>
+            <div class="starter-desc">Bypass emotional friction with the 5-Minute Start method.</div>
           </div>
 
-          <div class="starter-card" data-prompt="Can you teach me how to study using the Feynman Technique for difficult concepts?">
+          <div class="starter-card" data-prompt="Can you teach me how to study using the Feynman Technique so I can master difficult concepts?">
             <div class="starter-icon">🧠</div>
             <div class="starter-title">Feynman Technique</div>
-            <div class="starter-desc">Simplify complex subjects by identifying and fixing gaps in your understanding.</div>
+            <div class="starter-desc">Simplify complex topics by fixing blind spots in your reasoning.</div>
           </div>
 
-          <div class="starter-card" data-prompt="I feel burned out, exhausted, and like I am not smart enough to keep up with my peers.">
+          <div class="starter-card" data-prompt="I feel burned out, exhausted, and like I'm not smart enough to keep up with my peers.">
             <div class="starter-icon">🌧️</div>
             <div class="starter-title">Imposter Syndrome & Burnout</div>
-            <div class="starter-desc">Untangle academic self-doubt with cognitive reframing and self-compassion.</div>
+            <div class="starter-desc">Cognitive reframing to separate your self-worth from academic stress.</div>
           </div>
         </div>
       </div>
@@ -125,13 +146,13 @@
       </div>
     </div>
 
-    <!-- Centered Bottom Pill Input Box (ChatGPT / Gemini style) -->
+    <!-- Centered Bottom Pill Input Box -->
     <div class="input-floating-area">
       <div class="input-box-wrapper">
         <textarea 
           id="chatInput" 
           rows="1" 
-          placeholder="Message MindPal... (Share what's on your mind or ask a study question)"
+          placeholder="Message MindPal... (Share your worries, thoughts, or ask a study question)"
         ></textarea>
         <button class="send-btn" id="sendBtn" disabled title="Send message">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -145,83 +166,161 @@
     </div>
   </main>
 
-  <!-- Interactive 1-Minute Guided Box Breathing Modal -->
-  <div class="modal-overlay" id="breathingModal">
-    <div class="modal-card">
-      <button class="modal-close-btn" id="closeBreathingModal">&times;</button>
-      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
-        🌬️ 60-Second Box Breathing
-      </h3>
-      <p style="font-size: 0.85rem; color: var(--text-secondary);">
-        Activates the parasympathetic nervous system to physically reset acute anxiety.
+  <!-- ==================== INTERACTIVE TOOL MODALS ==================== -->
+
+  <!-- 1. Worry Dump & Triage Modal -->
+  <div class="modal-overlay" id="worryModal">
+    <div class="modal-card" style="max-width: 540px; text-align: left;">
+      <button class="modal-close-btn" id="closeWorryModal">&times;</button>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span style="font-size: 1.5rem;">🌪️</span>
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin: 0;">
+          Worry Dump & Action Triage
+        </h3>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 14px;">
+        When your head is spinning with multiple deadlines, thoughts, and dread, dump it all here. MindPal will de-tangle it into what you can control vs what to let go of tonight.
       </p>
 
-      <div class="breathing-box">
-        <div class="breathing-circle" id="breathingCircle">Inhale</div>
+      <textarea id="worryInput" rows="4" placeholder="Dump your raw, unfiltered racing thoughts here (e.g. Exam on Friday, haven't started chapter 3, feeling behind on lab report, worried I'll fail)..." style="width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--bg-sidebar-hover); color: var(--text-primary); font-size: 0.9rem; resize: vertical; outline: none; margin-bottom: 12px;"></textarea>
+
+      <button class="tool-btn" id="runWorryTriageBtn" style="width: 100%; justify-content: center; background-color: var(--primary-accent); color: white; border: none; font-weight: 600; padding: 10px;">
+        De-Tangle My Thoughts
+      </button>
+
+      <div id="worryResult" style="display: none; margin-top: 16px; max-height: 280px; overflow-y: auto; padding: 12px; border-radius: 10px; background-color: var(--bg-sidebar-hover); border: 1px solid var(--border-subtle); font-size: 0.88rem; line-height: 1.5;">
+        <!-- Parsed output -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. De-Catastrophizer (Thought Reframe) Modal -->
+  <div class="modal-overlay" id="reframeModal">
+    <div class="modal-card" style="max-width: 520px; text-align: left;">
+      <button class="modal-close-btn" id="closeReframeModal">&times;</button>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span style="font-size: 1.5rem;">🔄</span>
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin: 0;">
+          The De-Catastrophizer
+        </h3>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 14px;">
+        Trapped in a worst-case dread spiral? Let's identify the cognitive distortion and restore a calm, grounded perspective.
+      </p>
+
+      <input type="text" id="reframeInput" placeholder="e.g. 'If I get a B on this exam my future is ruined and I'm a failure'" style="width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--bg-sidebar-hover); color: var(--text-primary); font-size: 0.9rem; outline: none; margin-bottom: 12px;">
+
+      <button class="tool-btn" id="runReframeBtn" style="width: 100%; justify-content: center; background-color: var(--primary-accent); color: white; border: none; font-weight: 600; padding: 10px;">
+        Reframe This Thought
+      </button>
+
+      <div id="reframeResult" style="display: none; margin-top: 16px; max-height: 280px; overflow-y: auto; padding: 12px; border-radius: 10px; background-color: var(--bg-sidebar-hover); border: 1px solid var(--border-subtle); font-size: 0.88rem; line-height: 1.5;">
+        <!-- Parsed output -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 5-Minute Study Kickstart Modal -->
+  <div class="modal-overlay" id="kickstartModal">
+    <div class="modal-card" style="max-width: 520px; text-align: left;">
+      <button class="modal-close-btn" id="closeKickstartModal">&times;</button>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span style="font-size: 1.5rem;">⚡</span>
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin: 0;">
+          5-Minute Study Kickstart
+        </h3>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 14px;">
+        Overcome executive freeze. We break your task into an absurdly easy 5-minute micro-action with a live focus timer.
+      </p>
+
+      <input type="text" id="kickstartInput" placeholder="e.g. 'Write my 5-page literature essay' or 'Study organic reactions'" style="width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--bg-sidebar-hover); color: var(--text-primary); font-size: 0.9rem; outline: none; margin-bottom: 12px;">
+
+      <button class="tool-btn" id="runKickstartBtn" style="width: 100%; justify-content: center; background-color: var(--primary-accent); color: white; border: none; font-weight: 600; padding: 10px;">
+        Generate Zero-Friction Micro-Step
+      </button>
+
+      <div id="kickstartResult" style="display: none; margin-top: 16px; padding: 12px; border-radius: 10px; background-color: var(--bg-sidebar-hover); border: 1px solid var(--border-subtle); font-size: 0.88rem; line-height: 1.5;">
+        <!-- Parsed output -->
       </div>
 
-      <div class="breathing-instruction" id="breathingInstruction">Inhale deeply...</div>
-      <div class="breathing-subtext" id="breathingSubtext">4 seconds in through your nose</div>
-
-      <div style="margin-top: 24px;">
-        <button class="tool-btn" id="startBreathingBtn" style="width: 100%; justify-content: center; background-color: var(--primary-accent); color: white; border: none; font-weight: 600;">
-          Start Exercise
+      <!-- Live 5-Minute Timer -->
+      <div id="kickstartTimerContainer" style="display: none; margin-top: 16px; text-align: center; padding: 14px; border-radius: 10px; background-color: var(--bg-card); border: 1px solid var(--border-focus);">
+        <div style="font-size: 2rem; font-weight: 700; color: var(--primary-accent); font-family: monospace;" id="timerDisplay">
+          05:00
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 6px 0 10px 0;">
+          Just commit to these 5 minutes. You have full permission to stop when the timer rings.
+        </p>
+        <button class="tool-btn" id="toggleTimerBtn" style="margin: auto; background-color: var(--primary-accent); color: white; border: none;">
+          Start 5-Minute Timer
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Mood & Headspace Logger Modal -->
-  <div class="modal-overlay" id="moodModal">
-    <div class="modal-card">
-      <button class="modal-close-btn" id="closeMoodModal">&times;</button>
-      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
-        🧠 Check in with your Headspace
-      </h3>
-      <p style="font-size: 0.85rem; color: var(--text-secondary);">
-        Acknowledge your emotional state today. Stored privately on your device.
-      </p>
-
-      <div class="mood-buttons-grid">
-        <button class="mood-chip" data-mood="Calm">
-          😊
-          <span>Calm</span>
-        </button>
-        <button class="mood-chip" data-mood="Focused">
-          🎯
-          <span>Focused</span>
-        </button>
-        <button class="mood-chip" data-mood="Stressed">
-          🤯
-          <span>Stressed</span>
-        </button>
-        <button class="mood-chip" data-mood="Exhausted">
-          😴
-          <span>Exhausted</span>
-        </button>
-        <button class="mood-chip" data-mood="Low">
-          🌧️
-          <span>Low</span>
-        </button>
+  <!-- 4. Somatic Panic Reset (Breathing & 5-4-3-2-1 Grounding) Modal -->
+  <div class="modal-overlay" id="breathingModal">
+    <div class="modal-card" style="max-width: 480px;">
+      <button class="modal-close-btn" id="closeBreathingModal">&times;</button>
+      
+      <!-- Tab selector -->
+      <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 16px;">
+        <button class="tool-btn active-tab" id="tabBreathingBtn" style="font-weight: 600;">🌬️ Box Breathing</button>
+        <button class="tool-btn" id="tabGroundingBtn" style="font-weight: 600;">🖐️ 5-4-3-2-1 Sensory Grounding</button>
       </div>
 
-      <div style="text-align: left; margin-bottom: 16px;">
-        <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 6px;">
-          Energy Level (1 = Depleted, 5 = Peak)
-        </label>
-        <input type="range" id="moodEnergy" min="1" max="5" value="3" style="width: 100%;">
+      <!-- Section A: Box Breathing -->
+      <div id="boxBreathingSection">
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">
+          60-Second Box Breathing
+        </h3>
+        <p style="font-size: 0.82rem; color: var(--text-secondary);">
+          Physically downregulates fight-or-flight freeze responses before tests or study blocks.
+        </p>
+
+        <div class="breathing-box">
+          <div class="breathing-circle" id="breathingCircle">Inhale</div>
+        </div>
+
+        <div class="breathing-instruction" id="breathingInstruction">Inhale deeply...</div>
+        <div class="breathing-subtext" id="breathingSubtext">4 seconds in through your nose</div>
+
+        <div style="margin-top: 20px;">
+          <button class="tool-btn" id="startBreathingBtn" style="width: 100%; justify-content: center; background-color: var(--primary-accent); color: white; border: none; font-weight: 600;">
+            Start Breathing Cycle
+          </button>
+        </div>
       </div>
 
-      <div style="text-align: left; margin-bottom: 20px;">
-        <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 6px;">
-          Brief reflection / trigger note (optional)
-        </label>
-        <input type="text" id="moodNote" placeholder="e.g. Finals coming up, didn't sleep well" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--bg-sidebar-hover); color: var(--text-primary); outline: none;">
+      <!-- Section B: 5-4-3-2-1 Sensory Grounding Walkthrough -->
+      <div id="groundingSection" style="display: none; text-align: left;">
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">
+          5-4-3-2-1 Somatic Grounding
+        </h3>
+        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 14px;">
+          Pulls your attention out of anxious spirals and anchors you back into physical reality.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.88rem;">
+          <div style="background: var(--bg-sidebar-hover); padding: 10px; border-radius: 8px; border-left: 3px solid #6366f1;">
+            <strong>👀 5 things you can SEE</strong>: Look around your desk/room. Notice a pencil, a shadow, a book spine.
+          </div>
+          <div style="background: var(--bg-sidebar-hover); padding: 10px; border-radius: 8px; border-left: 3px solid #3b82f6;">
+            <strong>✋ 4 things you can TOUCH</strong>: Feel the texture of your desk, your shirt, or your feet on the floor.
+          </div>
+          <div style="background: var(--bg-sidebar-hover); padding: 10px; border-radius: 8px; border-left: 3px solid #10b981;">
+            <strong>👂 3 things you can HEAR</strong>: Listen closely. Fan hum, distant voices, or your own breath.
+          </div>
+          <div style="background: var(--bg-sidebar-hover); padding: 10px; border-radius: 8px; border-left: 3px solid #f59e0b;">
+            <strong>👃 2 things you can SMELL</strong>: Your coffee, paper, or the air in the room.
+          </div>
+          <div style="background: var(--bg-sidebar-hover); padding: 10px; border-radius: 8px; border-left: 3px solid #ec4899;">
+            <strong>💬 1 positive truth</strong>: Tell yourself: <em>"This anxiety is uncomfortable, but it is temporary and I am safe."</em>
+          </div>
+        </div>
       </div>
 
-      <button class="tool-btn" id="saveMoodBtn" style="width: 100%; justify-content: center; background-color: var(--primary-accent); color: white; border: none; font-weight: 600;">
-        Save Check-in
-      </button>
     </div>
   </div>
 

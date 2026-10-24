@@ -1,10 +1,12 @@
-// MindPal - Client Application Logic
+// MindPal - Client Application Logic with Student Wellness Action Tools
 
 let currentSessionId = null;
 let sessions = [];
 let isGenerating = false;
 let breathingInterval = null;
-let selectedMood = "Calm";
+let countdownTimer = null;
+let secondsRemaining = 300; // 5 minutes
+let isTimerRunning = false;
 
 // DOM Elements
 const sidebar = document.getElementById("sidebar");
@@ -22,21 +24,43 @@ const themeToggleBtn = document.getElementById("themeToggleBtn");
 const themeIcon = document.getElementById("themeIcon");
 
 // Modals
+const worryModal = document.getElementById("worryModal");
+const openWorryModalBtn = document.getElementById("openWorryModalBtn");
+const quickWorryBtn = document.getElementById("quickWorryBtn");
+const closeWorryModal = document.getElementById("closeWorryModal");
+const worryInput = document.getElementById("worryInput");
+const runWorryTriageBtn = document.getElementById("runWorryTriageBtn");
+const worryResult = document.getElementById("worryResult");
+
+const reframeModal = document.getElementById("reframeModal");
+const openReframeModalBtn = document.getElementById("openReframeModalBtn");
+const closeReframeModal = document.getElementById("closeReframeModal");
+const reframeInput = document.getElementById("reframeInput");
+const runReframeBtn = document.getElementById("runReframeBtn");
+const reframeResult = document.getElementById("reframeResult");
+
+const kickstartModal = document.getElementById("kickstartModal");
+const openKickstartModalBtn = document.getElementById("openKickstartModalBtn");
+const closeKickstartModal = document.getElementById("closeKickstartModal");
+const kickstartInput = document.getElementById("kickstartInput");
+const runKickstartBtn = document.getElementById("runKickstartBtn");
+const kickstartResult = document.getElementById("kickstartResult");
+const kickstartTimerContainer = document.getElementById("kickstartTimerContainer");
+const timerDisplay = document.getElementById("timerDisplay");
+const toggleTimerBtn = document.getElementById("toggleTimerBtn");
+
 const breathingModal = document.getElementById("breathingModal");
 const openBreathingModalBtn = document.getElementById("openBreathingModalBtn");
+const quickBreathingBtn = document.getElementById("quickBreathingBtn");
 const closeBreathingModal = document.getElementById("closeBreathingModal");
+const tabBreathingBtn = document.getElementById("tabBreathingBtn");
+const tabGroundingBtn = document.getElementById("tabGroundingBtn");
+const boxBreathingSection = document.getElementById("boxBreathingSection");
+const groundingSection = document.getElementById("groundingSection");
 const startBreathingBtn = document.getElementById("startBreathingBtn");
 const breathingCircle = document.getElementById("breathingCircle");
 const breathingInstruction = document.getElementById("breathingInstruction");
 const breathingSubtext = document.getElementById("breathingSubtext");
-
-const moodModal = document.getElementById("moodModal");
-const openMoodModalBtn = document.getElementById("openMoodModalBtn");
-const closeMoodModal = document.getElementById("closeMoodModal");
-const moodChips = document.querySelectorAll(".mood-chip");
-const moodEnergy = document.getElementById("moodEnergy");
-const moodNote = document.getElementById("moodNote");
-const saveMoodBtn = document.getElementById("saveMoodBtn");
 
 // ----------------- THEME INITIALIZATION -----------------
 function initTheme() {
@@ -129,7 +153,7 @@ function renderSessionsList() {
     const delBtn = item.querySelector(".session-delete-btn");
     delBtn.addEventListener("click", async (e) => {
       e.stopPropagation();
-      if (confirm("Delete this conversation?")) {
+      if (confirm("Delete this reflection?")) {
         await deleteSession(sess.id);
       }
     });
@@ -147,7 +171,7 @@ async function createNewSession() {
     });
     const data = await res.json();
     currentSessionId = data.id;
-    chatHeaderTitle.textContent = "New Conversation";
+    chatHeaderTitle.textContent = "New Reflection";
     await fetchSessions();
     renderConversationView([]);
   } catch (err) {
@@ -165,7 +189,7 @@ async function selectSession(sessionId) {
   try {
     const res = await fetch(`/api/sessions/${sessionId}/messages`);
     const data = await res.json();
-    chatHeaderTitle.textContent = data.session.title || "Conversation";
+    chatHeaderTitle.textContent = data.session.title || "Reflection";
     renderConversationView(data.messages || []);
   } catch (err) {
     console.error("Error loading session messages:", err);
@@ -239,15 +263,12 @@ async function sendMessage() {
   chatInput.style.height = "auto";
   sendBtn.disabled = true;
 
-  // Make sure hero screen is hidden
   heroScreen.style.display = "none";
   messagesList.style.display = "flex";
 
-  // Append user message
   appendMessageToDOM("user", text);
   scrollToBottom();
 
-  // Create assistant placeholder with cursor
   const assistantRow = document.createElement("div");
   assistantRow.className = "message-row assistant";
   assistantRow.innerHTML = `
@@ -280,14 +301,12 @@ async function sendMessage() {
 
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split("\n\n");
-      buffer = lines.pop(); // keep remainder
+      buffer = lines.pop();
 
       for (const line of lines) {
         if (line.startsWith("data: ")) {
           const payload = line.replace("data: ", "").trim();
-          if (payload === "[DONE]") {
-            break;
-          }
+          if (payload === "[DONE]") break;
           try {
             const parsed = JSON.parse(payload);
             if (parsed.token) {
@@ -295,33 +314,189 @@ async function sendMessage() {
               msgBody.innerHTML = marked.parse(accumulatedReply);
               scrollToBottom();
             }
-          } catch (e) {
-            // non-json line
-          }
+          } catch (e) {}
         }
       }
     }
   } catch (err) {
     console.error("Streaming error:", err);
-    accumulatedReply += "\n\n*(A brief connection error occurred. Please try again in a moment.)*";
+    accumulatedReply += "\n\n*(A brief connection hiccup occurred. Please take a breath and try again.)*";
     msgBody.innerHTML = marked.parse(accumulatedReply);
   } finally {
     msgBody.classList.remove("typing-cursor");
     isGenerating = false;
     sendBtn.disabled = chatInput.value.trim().length === 0;
-    
-    // Refresh sessions so auto-generated title reflects in sidebar
     fetchSessions();
   }
 }
 
-// ----------------- GUIDED BOX BREATHING MODAL -----------------
-openBreathingModalBtn.addEventListener("click", () => {
-  breathingModal.classList.add("active");
+// ----------------- TOOL 1: WORRY DUMP & TRIAGE -----------------
+function openWorry() {
+  worryModal.classList.add("active");
+  worryInput.focus();
+}
+
+openWorryModalBtn.addEventListener("click", openWorry);
+quickWorryBtn.addEventListener("click", openWorry);
+
+closeWorryModal.addEventListener("click", () => {
+  worryModal.classList.remove("active");
 });
+
+runWorryTriageBtn.addEventListener("click", async () => {
+  const text = worryInput.value.trim();
+  if (!text) return;
+
+  runWorryTriageBtn.textContent = "De-tangling thoughts...";
+  runWorryTriageBtn.disabled = true;
+
+  try {
+    const res = await fetch("/api/tools/worry-triage", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ worry_dump: text })
+    });
+    const data = await res.json();
+    worryResult.innerHTML = marked.parse(data.result);
+    worryResult.style.display = "block";
+  } catch (err) {
+    worryResult.innerHTML = `<span style="color: red;">Error: ${err.message}</span>`;
+    worryResult.style.display = "block";
+  } finally {
+    runWorryTriageBtn.textContent = "De-Tangle My Thoughts";
+    runWorryTriageBtn.disabled = false;
+  }
+});
+
+// ----------------- TOOL 2: DE-CATASTROPHIZER -----------------
+openReframeModalBtn.addEventListener("click", () => {
+  reframeModal.classList.add("active");
+  reframeInput.focus();
+});
+
+closeReframeModal.addEventListener("click", () => {
+  reframeModal.classList.remove("active");
+});
+
+runReframeBtn.addEventListener("click", async () => {
+  const text = reframeInput.value.trim();
+  if (!text) return;
+
+  runReframeBtn.textContent = "Analyzing cognitive pattern...";
+  runReframeBtn.disabled = true;
+
+  try {
+    const res = await fetch("/api/tools/reframe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ catastrophic_thought: text })
+    });
+    const data = await res.json();
+    reframeResult.innerHTML = marked.parse(data.result);
+    reframeResult.style.display = "block";
+  } catch (err) {
+    reframeResult.innerHTML = `<span style="color: red;">Error: ${err.message}</span>`;
+    reframeResult.style.display = "block";
+  } finally {
+    runReframeBtn.textContent = "Reframe This Thought";
+    runReframeBtn.disabled = false;
+  }
+});
+
+// ----------------- TOOL 3: 5-MINUTE STUDY KICKSTART -----------------
+openKickstartModalBtn.addEventListener("click", () => {
+  kickstartModal.classList.add("active");
+  kickstartInput.focus();
+});
+
+closeKickstartModal.addEventListener("click", () => {
+  kickstartModal.classList.remove("active");
+  stopKickstartTimer();
+});
+
+runKickstartBtn.addEventListener("click", async () => {
+  const text = kickstartInput.value.trim();
+  if (!text) return;
+
+  runKickstartBtn.textContent = "Designing micro-step...";
+  runKickstartBtn.disabled = true;
+
+  try {
+    const res = await fetch("/api/tools/micro-starter", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ intimidating_task: text })
+    });
+    const data = await res.json();
+    kickstartResult.innerHTML = marked.parse(data.result);
+    kickstartResult.style.display = "block";
+    kickstartTimerContainer.style.display = "block";
+  } catch (err) {
+    kickstartResult.innerHTML = `<span style="color: red;">Error: ${err.message}</span>`;
+    kickstartResult.style.display = "block";
+  } finally {
+    runKickstartBtn.textContent = "Generate Zero-Friction Micro-Step";
+    runKickstartBtn.disabled = false;
+  }
+});
+
+function formatTimer(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+function stopKickstartTimer() {
+  if (countdownTimer) {
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+  }
+  isTimerRunning = false;
+  secondsRemaining = 300;
+  timerDisplay.textContent = "05:00";
+  toggleTimerBtn.textContent = "Start 5-Minute Timer";
+}
+
+toggleTimerBtn.addEventListener("click", () => {
+  if (!isTimerRunning) {
+    isTimerRunning = true;
+    toggleTimerBtn.textContent = "Pause Timer";
+    countdownTimer = setInterval(() => {
+      secondsRemaining--;
+      timerDisplay.textContent = formatTimer(secondsRemaining);
+      if (secondsRemaining <= 0) {
+        stopKickstartTimer();
+        alert("🎉 5 minutes complete! You broke the starting friction. Feel free to keep going or take a well-deserved breather!");
+      }
+    }, 1000);
+  } else {
+    clearInterval(countdownTimer);
+    isTimerRunning = false;
+    toggleTimerBtn.textContent = "Resume Timer";
+  }
+});
+
+// ----------------- TOOL 4: SOMATIC PANIC RESET (BREATHING & 5-4-3-2-1) -----------------
+function openBreathing() {
+  breathingModal.classList.add("active");
+}
+
+openBreathingModalBtn.addEventListener("click", openBreathing);
+quickBreathingBtn.addEventListener("click", openBreathing);
 
 closeBreathingModal.addEventListener("click", () => {
   breathingModal.classList.remove("active");
+  stopBreathingAnimation();
+});
+
+tabBreathingBtn.addEventListener("click", () => {
+  boxBreathingSection.style.display = "block";
+  groundingSection.style.display = "none";
+});
+
+tabGroundingBtn.addEventListener("click", () => {
+  boxBreathingSection.style.display = "none";
+  groundingSection.style.display = "block";
   stopBreathingAnimation();
 });
 
@@ -339,7 +514,7 @@ function stopBreathingAnimation() {
 
 startBreathingBtn.addEventListener("click", () => {
   startBreathingBtn.style.display = "none";
-  let phase = 0; // 0: inhale, 1: hold, 2: exhale, 3: hold
+  let phase = 0;
 
   function runPhase() {
     if (phase === 0) {
@@ -370,57 +545,17 @@ startBreathingBtn.addEventListener("click", () => {
   breathingInterval = setInterval(runPhase, 4000);
 });
 
-// ----------------- MOOD CHECK-IN MODAL -----------------
-openMoodModalBtn.addEventListener("click", () => {
-  moodModal.classList.add("active");
-});
-
-closeMoodModal.addEventListener("click", () => {
-  moodModal.classList.remove("active");
-});
-
-moodChips.forEach(chip => {
-  chip.addEventListener("click", () => {
-    moodChips.forEach(c => c.classList.remove("selected"));
-    chip.classList.add("selected");
-    selectedMood = chip.getAttribute("data-mood");
-  });
-});
-
-saveMoodBtn.addEventListener("click", async () => {
-  const energy = parseInt(moodEnergy.value);
-  const note = moodNote.value.trim();
-
-  try {
-    await fetch("/api/mood", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        mood: selectedMood,
-        energy: energy,
-        note: note
-      })
-    });
-    moodModal.classList.remove("active");
-    moodNote.value = "";
-    
-    // Add a gentle prompt suggestion into the conversation
-    chatInput.value = `I just logged my mood as "${selectedMood}" with an energy level of ${energy}/5. ${note ? 'Note: ' + note : ''}`;
-    chatInput.style.height = "auto";
-    sendBtn.disabled = false;
-  } catch (err) {
-    console.error("Failed to save mood:", err);
-  }
-});
-
 // Close modals when clicking overlay background
 window.addEventListener("click", (e) => {
+  if (e.target === worryModal) worryModal.classList.remove("active");
+  if (e.target === reframeModal) reframeModal.classList.remove("active");
+  if (e.target === kickstartModal) {
+    kickstartModal.classList.remove("active");
+    stopKickstartTimer();
+  }
   if (e.target === breathingModal) {
     breathingModal.classList.remove("active");
     stopBreathingAnimation();
-  }
-  if (e.target === moodModal) {
-    moodModal.classList.remove("active");
   }
 });
 
